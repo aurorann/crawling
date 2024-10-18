@@ -3,6 +3,8 @@ package com.example.crawling;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,18 +16,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CrawlingApplication {
 
-	private List<String> visitedLinks = new ArrayList<>();
+	//private List<String> visitedLinks = new ArrayList<>();
+
+	private Set<String> visitedLinks =  new HashSet<String>();
 
 	public static void main(String[] args) {
 		SpringApplication.run(CrawlingApplication.class, args);
 
-		System.out.println("Application start");
+		// System.out.println("Application start");
 		
-		Arrays.stream(args).forEach(it ->{
-			System.out.println(it);
-		});
+		// Arrays.stream(args).forEach(it ->{
+		// 	System.out.println(it);
+		// });
 
-		String startUrl = args[0];
+		String startUrl = args[0].endsWith("/") ? args[0].substring(0, args[0].length() - 1) : args[0];
 		int depth;
 
 		try {
@@ -44,26 +48,37 @@ public class CrawlingApplication {
 	}
 
 	public void crawl(String url, int maxDepth, int currentDepth) {
-		if (currentDepth > maxDepth || visitedLinks.contains(url)) {
+		if (currentDepth > maxDepth || !visitedLinks.add(url)) {
 			return;
 		}
 
-		visitedLinks.add(url);
-		System.out.println(getIndentation(currentDepth) + url);
+		System.out.println("현재 dept["+currentDepth+"] "+getIndentation(currentDepth) + url);
 
 		try {
 			Document document = Jsoup.connect(url).get();
-			Elements links = document.select("li a[href]");
+			Elements links = document.select("a[href]");
 
-			for(Element link : links){
-				String nextLink = link.absUrl("href");
-				if (nextLink.startsWith("http")) {
-					System.out.println(getIndentation(currentDepth + 1) + nextLink); // Print the link with indentation
-					crawl(nextLink, maxDepth, currentDepth + 1);
-				}
-			}
-		} catch (Exception e) {
-			System.out.println(getIndentation(currentDepth) + "예외");
+			// for(Element link : links){
+			// 	String nextLink = link.absUrl("href");
+			// 	if (nextLink.startsWith("http")) {
+			// 		crawl(nextLink, maxDepth, currentDepth + 1);
+			// 	}
+			// }
+
+            for (Element link : links) {
+                String nextLink = link.absUrl("href");
+                // nextLink의 맨 뒤에 슬래시가 있으면 제거
+                if (nextLink.endsWith("/")) {
+                    nextLink = nextLink.substring(0, nextLink.length() - 1);
+                }
+                if (nextLink.startsWith("http")) {
+                    crawl(nextLink, maxDepth, currentDepth + 1);
+                }
+            }
+
+		} 
+		catch (Exception e) {
+			System.out.println(getIndentation(currentDepth) + "예외 : " + e.getMessage());
 		}
 	}
 
