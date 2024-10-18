@@ -14,13 +14,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CrawlingApplication {
-
+public class CrawlingApplication
+{
 	//private List<String> visitedLinks = new ArrayList<>();
-
 	private Set<String> visitedLinks =  new HashSet<String>();
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
+		CrawlingService crawlingService = new CrawlingService();
+		crawlingService.doCrawling(0, 10, "https://www.khan.co.kr/");
+
+
 		SpringApplication.run(CrawlingApplication.class, args);
 
 		// System.out.println("Application start");
@@ -29,11 +33,12 @@ public class CrawlingApplication {
 		// 	System.out.println(it);
 		// });
 
-		String startUrl = args[0].endsWith("/") ? args[0].substring(0, args[0].length() - 1) : args[0];
-		int depth;
+//		String startUrl = args[0].endsWith("/") ? args[0].substring(0, args[0].length() - 1) : args[0];
+		String startUrl = "https://www.khan.co.kr/";
+		int depth = 10;
 
 		try {
-			depth = Integer.parseInt(args[1]);
+//			depth = Integer.parseInt(args[1]);
 
 			CrawlingApplication crawler = new CrawlingApplication();
 			crawler.crawl(startUrl, depth, 0);
