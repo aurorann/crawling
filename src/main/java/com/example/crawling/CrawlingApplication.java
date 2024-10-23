@@ -1,8 +1,5 @@
 package com.example.crawling;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -38,7 +35,7 @@ public class CrawlingApplication
 		int depth = 10;
 
 		try {
-//			depth = Integer.parseInt(args[1]);
+			// depth = Integer.parseInt(args[1]);
 
 			CrawlingApplication crawler = new CrawlingApplication();
 			crawler.crawl(startUrl, depth, 0);
@@ -47,7 +44,7 @@ public class CrawlingApplication
 			System.out.println("depth는 숫자만 가능");
 		}
 
-		//System.out.println(startUrl);
+		// System.out.println(startUrl);
 
 		System.exit(0);
 	}
